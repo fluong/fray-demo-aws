@@ -1,0 +1,45 @@
+name: fray
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+  security-events: write
+
+jobs:
+  fray:
+    runs-on: ubuntu-latest
+    services:
+      localstack:
+        image: localstack/localstack:4.0
+        ports:
+          - 4566:4566
+        env:
+          SERVICES: sts
+          DEBUG: "0"
+        options: >-
+          --health-cmd "curl -sf http://localhost:4566/_localstack/health"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 30
+    env:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_EC2_METADATA_DISABLED: "true"
+      TF_VAR_aws_access_key: test
+      TF_VAR_aws_secret_key: test
+      TF_VAR_aws_sts_endpoint: http://localhost:4566
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: fluong/fray@v0.2.0
+        with:
+          api-url: https://fray-api-nm4k2bk6ba-ew.a.run.app
+          working-directory: infra
+          config: fray.yaml
