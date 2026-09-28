@@ -14,10 +14,8 @@ against LocalStack **STS only** — no cloud credentials.
 
 | PR | Change | Gate |
 |---|---|---|
-| Advisory | `task_exec_secret_arns` widened to `"*"` → **FR-007** | Not blocking (merge allowed) |
-| Blocking | S3 public-access block flags cleared → **FR-010** | Blocked (merge refused) |
-
-Links are filled in after the baseline push and PRs are opened.
+| [#1](https://github.com/fluong/fray-demo-aws/pull/1) | Extra `GetSecretValue` on `Resource "*"` → **FR-007** | Not blocking (merge allowed) |
+| [#2](https://github.com/fluong/fray-demo-aws/pull/2) | S3 Block Public Access flags cleared → **FR-025** | Blocked (merge refused) |
 
 ## License
 
