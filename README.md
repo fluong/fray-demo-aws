@@ -8,7 +8,7 @@ against LocalStack **STS only** — no cloud credentials.
 
 - `infra/` — the `aws-web-app` fixture from `fluong/fray` (see `infra/NOTICE`)
 - `fray.yaml` / `mitigations.yaml` — empty augmentation and dispositions
-- `.github/workflows/fray.yml` — `fluong/fray@v0.2.0` against the hosted API
+- `.github/workflows/fray.yml` — `fluong/fray@v0.2.1` against the hosted API
 
 ## Demo pull requests
 
