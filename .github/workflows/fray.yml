@@ -37,8 +37,10 @@ jobs:
       TF_VAR_aws_sts_endpoint: http://localhost:4566
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - uses: fluong/fray@v0.2.2
+      - uses: fluong/fray@v0.2.3
         with:
           api-url: https://fray-api-nm4k2bk6ba-ew.a.run.app
           working-directory: infra
