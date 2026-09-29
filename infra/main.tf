@@ -18,7 +18,7 @@
 # Mitigated:
 #   FR-002  autoscaling_max_capacity is 10
 #   FR-006  Secrets Manager audit logging is the CloudTrail default
-#   FR-007  GetSecretValue is granted on this secret's ARN only
+#   FR-007  OPEN in this PR: GetSecretValue Resource "*"
 #   FR-008  recovery window is left at the provider default (30 days)
 #   FR-010  the bucket is not public
 #   FR-024  object ownership is BucketOwnerEnforced
@@ -162,6 +162,14 @@ module "ecs_service" {
   }
 
   task_exec_secret_arns = [module.db_password.secret_arn]
+  # Extra wildcard grant opens FR-007 (authz_scope=account).
+  task_exec_iam_statements = [
+    {
+      sid       = "SecretsWildcard"
+      actions   = ["secretsmanager:GetSecretValue"]
+      resources = ["*"]
+    }
+  ]
 
   tasks_iam_role_statements = [
     {
