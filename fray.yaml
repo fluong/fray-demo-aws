@@ -1,1 +1,8 @@
 schema_version: fray-config/v1
+# Declared purposes only — no name-based inference (fray v0.5.0).
+# module.uploads is the app's customer object store (ECS ListBucket/Get/Put/Delete).
+# There is no log or audit-archive bucket in this fixture; omit those purposes.
+annotations:
+  elements:
+    - address: module.uploads.aws_s3_bucket.this[0]
+      purpose: customer_uploads

@@ -41,7 +41,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: fluong/fray@v0.3.1
+      - uses: fluong/fray@d405f63973b72b8e9dd97a97b4971fa5f18476f9 # v0.5.0
         with:
           api-url: https://fray-api-nm4k2bk6ba-ew.a.run.app
           working-directory: infra
