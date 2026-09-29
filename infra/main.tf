@@ -20,7 +20,7 @@
 #   FR-006  Secrets Manager audit logging is the CloudTrail default
 #   FR-007  GetSecretValue is granted on this secret's ARN only
 #   FR-008  recovery window is left at the provider default (30 days)
-#   FR-010  the bucket is not public
+#   FR-010  OPEN in this PR: uploads bucket public-access block disabled
 #   FR-024  object ownership is BucketOwnerEnforced
 #   FR-025  all four Block Public Access flags are true
 # Stored, no current rule:
@@ -277,10 +277,10 @@ module "uploads" {
   control_object_ownership = true
   object_ownership         = "BucketOwnerEnforced"
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false  # demo: opens FR-010 (blocking high)
 
   server_side_encryption_configuration = {
     rule = {
