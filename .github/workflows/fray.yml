@@ -40,8 +40,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: fluong/fray@v0.2.3
+      - uses: fluong/fray@v0.3.1
         with:
           api-url: https://fray-api-nm4k2bk6ba-ew.a.run.app
           working-directory: infra
           config: fray.yaml
+          redaction-key: ${{ secrets.FRAY_REDACTION_KEY }}
+          show-payload: true
