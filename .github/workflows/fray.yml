@@ -37,11 +37,11 @@ jobs:
       TF_VAR_aws_secret_key: test
       TF_VAR_aws_sts_endpoint: http://localhost:4566
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      - uses: fluong/fray@d405f63973b72b8e9dd97a97b4971fa5f18476f9 # v0.5.0
+      - uses: fluong/fray@6b649034f451f6ffe876ced3a635cfd2fef20c20 # v0.5.1
         with:
           api-url: https://fray-api-nm4k2bk6ba-ew.a.run.app
           working-directory: infra
