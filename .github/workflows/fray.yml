@@ -5,6 +5,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      runner:
+        description: GitHub-hosted runner label (e.g. ubuntu-latest, ubuntu-26.04)
+        required: false
+        default: ubuntu-latest
+        type: string
 
 permissions:
   id-token: write
@@ -14,7 +20,7 @@ permissions:
 
 jobs:
   fray:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     services:
       localstack:
         image: localstack/localstack:4.0
