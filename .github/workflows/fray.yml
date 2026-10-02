@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       runner:
-        description: GitHub-hosted runner label (e.g. ubuntu-latest, ubuntu-26.04)
+        description: GitHub-hosted runner label (e.g. ubuntu-26.04, ubuntu-latest)
         required: false
-        default: ubuntu-latest
+        default: ubuntu-26.04
         type: string
 
 permissions:
@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   fray:
-    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
     services:
       localstack:
         image: localstack/localstack:4.0
@@ -46,6 +46,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: fluong/fray@275e3257e33c272b741466d4001e0b7326343c74 # v0.5.4
         with:
