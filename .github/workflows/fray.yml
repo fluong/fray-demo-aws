@@ -49,7 +49,7 @@ jobs:
 
       - uses: fluong/fray@275e3257e33c272b741466d4001e0b7326343c74 # v0.5.4
         with:
-          api-url: https://fray-api-nm4k2bk6ba-ew.a.run.app
+          api-url: https://api.getfray.dev
           working-directory: infra
           config: fray.yaml
           redaction-key: ${{ secrets.FRAY_REDACTION_KEY }}

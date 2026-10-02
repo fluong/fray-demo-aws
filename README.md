@@ -30,7 +30,8 @@ On `pull_request` and `push` to `main`:
 Permissions required: `id-token: write`, `contents: read`, `pull-requests: write`,
 `security-events: write`.
 
-The Action `api-url` points at the hosted Fray API. Fork PRs cannot mint an
+The Action `api-url` is `https://api.getfray.dev` (push, pull_request, and
+`workflow_dispatch` share the same job). Fork PRs cannot mint an
 OIDC token for audience `fray` — Fray skips with a warning (never a silent pass).
 
 ## Demo pull requests
