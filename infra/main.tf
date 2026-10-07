@@ -22,7 +22,8 @@
 #   FR-008  recovery window is left at the provider default (30 days)
 #   FR-010  the bucket is not public
 #   FR-024  object ownership is BucketOwnerEnforced
-#   FR-025  all four Block Public Access flags are true
+# Open on demo/llm-check (NEW vs main — exercises advisory LLM):
+#   FR-025  Block Public Access flags flipped false for the uploads bucket
 # Stored, no current rule:
 #   RDS deletion_protection, storage_encrypted, publicly_accessible = false
 #   S3 SSE-S3 (the encryption sibling is present)
@@ -277,10 +278,12 @@ module "uploads" {
   control_object_ownership = true
   object_ownership         = "BucketOwnerEnforced"
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  # Intentionally open FR-025 (NEW vs main) so prod LLM enrichment runs.
+  # Demo-only; plan never applied. Revert before merging to main.
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 
   server_side_encryption_configuration = {
     rule = {
