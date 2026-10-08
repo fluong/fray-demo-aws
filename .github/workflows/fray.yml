@@ -48,7 +48,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: fluong/fray@23947633d771e9bb74f9262809a424673886651d # v0.5.5
+      - uses: fluong/fray@46285b1d36b2ed9690f6a06f18d2b803ba52a370 # v0.6.0
         with:
           api-url: https://api.getfray.dev
           working-directory: infra
