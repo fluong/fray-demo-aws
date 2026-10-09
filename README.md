@@ -14,8 +14,9 @@ GitHub Actions OIDC (`aud` = `fray`).
 | `infra/` | `aws-web-app` fixture from `fluong/fray` (plan-only; see `infra/NOTICE`) |
 | `infra/ci.tf` | LocalStack STS endpoint + dummy AWS keys for CI |
 | `fray.yaml` | Empty augmentation (`schema_version: fray-config/v1`) |
-| `mitigations.yaml` | Empty dispositions (`entries: []`) |
-| `.github/workflows/fray.yml` | `fluong/fray@v0.2.3` against the hosted API |
+| `.fray/waivers.yml` | Example accepted-risk waiver (see [Waivers](#waivers)) |
+| `.github/CODEOWNERS` | Requires `@fluong` review for changes under `.fray/` |
+| `.github/workflows/fray.yml` | `fluong/fray@v0.7.0` against the hosted API |
 
 ## How CI works
 
@@ -23,7 +24,7 @@ On `pull_request` and `push` to `main`:
 
 1. Starts LocalStack with `SERVICES=sts` only
 2. Checks out the repo (`fetch-depth: 0` for base-commit compares)
-3. Runs `fluong/fray@v0.2.3` with `working-directory: infra`
+3. Runs `fluong/fray@v0.7.0` with `working-directory: infra`
 4. Fray runs `terraform init` / `plan` / `show -json`, POSTs the DFD over OIDC,
    updates the PR comment, uploads SARIF, and fails the job when the gate blocks
 
@@ -45,6 +46,34 @@ Open findings planted in the baseline fixture (see comments in `infra/main.tf`)
 include FR-001, FR-003, FR-005, FR-009, FR-012, FR-014, and FR-026. The demo PRs
 add *new* findings relative to that baseline to exercise advisory vs blocking.
 
+## Waivers
+
+Accepted risks live in **`.fray/waivers.yml`** (Fray Action v0.7.0+). This repo
+waives the planted **FR-009** (low) finding on the database password secret —
+rotation is left off on purpose in the fixture, and the waiver documents that
+choice with an expiry.
+
+```yaml
+# .fray/waivers.yml (excerpt)
+version: 1
+waivers:
+  - id: demo-db-secret-rotation
+    rule: FR-009
+    address: module.db_password.aws_secretsmanager_secret.this[0]
+    reason: "Demo fixture: rotation is intentionally off so FR-009 stays visible until waived."
+    owner: "@fluong"
+    expires: "2026-12-08"
+```
+
+Reason and owner stay in git; Fray only receives the waiver id, rule, hashed
+target id, and expiry. See the [Fray README — Waivers](https://github.com/fluong/fray#waivers).
+
+**CODEOWNERS:** `/.fray/ @fluong` so changes to the waiver file need review
+before merge. Fray does not enforce GitHub review rules — CODEOWNERS is the
+repo’s protection.
+
+`mitigations.yaml` is removed (empty legacy file; superseded by `.fray/waivers.yml`).
+
 ## Config
 
 ```yaml
@@ -52,14 +81,8 @@ add *new* findings relative to that baseline to exercise advisory vs blocking.
 schema_version: fray-config/v1
 ```
 
-```yaml
-# mitigations.yaml
-schema_version: mitigation/v1
-entries: []
-```
-
-No accepted mitigations and no declared elements — the scan is pure plan
-inference plus Fray’s server-side rules.
+No declared elements — the scan is pure plan inference plus Fray’s server-side
+rules, plus the example waiver above.
 
 ## Related
 
