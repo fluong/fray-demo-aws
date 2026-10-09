@@ -1,0 +1,8 @@
+version: 1
+waivers:
+  - id: demo-db-secret-rotation
+    rule: FR-009
+    address: module.db_password.aws_secretsmanager_secret.this[0]
+    reason: "Demo fixture: rotation is intentionally off so FR-009 stays visible until waived."
+    owner: "@fluong"
+    expires: "2026-12-08"
