@@ -12,15 +12,15 @@ on:
         default: ubuntu-26.04
         type: string
 
-permissions:
-  id-token: write
-  contents: read
-  pull-requests: write
-  security-events: write
+# Throwaway test PR: split plan generation from Fray so plan-file matches
+# what fluong/fray@8d2bb3f action/scan.sh would produce (same setup-terraform
+# pin, init/plan/show flags, working-directory infra).
 
 jobs:
-  fray:
+  plan:
     runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
+    permissions:
+      contents: read
     services:
       localstack:
         image: localstack/localstack:4.0
@@ -48,10 +48,62 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: fluong/fray@9a7e7f37ff3bc7bcc4475291dff8d0a451de0690 # v0.9.1
+      # Same pin and inputs as fluong/fray action.yml (8d2bb3f) Setup Terraform.
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_wrapper: false
+
+      # Mirror action/scan.sh:230–243 (workdir = infra).
+      - name: terraform init / plan / show -json
+        run: |
+          set -euo pipefail
+          terraform -chdir=infra init -input=false -no-color
+          terraform -chdir=infra plan -input=false -no-color -out=tfplan
+          terraform -chdir=infra show -json tfplan > infra/plan.json
+
+      - name: Refuse to upload plan with known secrets
+        working-directory: infra
+        run: |
+          set -euo pipefail
+          leaks=$(jq '[.resource_changes[]
+                       | select(.type=="random_password" or .type=="aws_secretsmanager_secret_version")
+                       | .change.after // {}
+                       | (.result, .secret_string)
+                       | select(. != null)] | length' plan.json)
+          echo "known secret values in plan: $leaks"
+          test "$leaks" -eq 0
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: fray-plan
+          path: infra/plan.json
+          retention-days: 1
+          if-no-files-found: error
+
+  fray:
+    needs: plan
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: fray-plan
+          path: infra/
+
+      - uses: fluong/fray@8d2bb3fa2e6e06536ad54fb108f8c98e46c2373f # v0.10.0-rc
         with:
           api-url: https://api.getfray.dev
           working-directory: infra
           config: fray.yaml
           redaction-key: ${{ secrets.FRAY_REDACTION_KEY }}
           show-payload: true
+          plan-file: plan.json
