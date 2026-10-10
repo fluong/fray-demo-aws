@@ -1,0 +1,28 @@
+name: fray-check
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  fray-check:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: fluong/fray@2a63cb4b732f76634219201f7d6d23beaab4c8c9 # v0.11.0-rc
+        with:
+          api-url: https://api.getfray.dev
+          working-directory: infra
+          config: fray.yaml
+          redaction-key: ${{ secrets.FRAY_REDACTION_KEY }}
+          show-payload: true
+          mode: check
