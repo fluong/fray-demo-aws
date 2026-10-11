@@ -23,9 +23,12 @@
 #   FR-010  the bucket is not public
 #   FR-024  object ownership is BucketOwnerEnforced
 #   FR-025  all four Block Public Access flags are true
+#   FR-030  RDS storage_encrypted = true
+#   FR-032  S3 task role is scoped to this bucket ARN
+#   FR-033  RDS deletion_protection = true
 # Stored, no current rule:
-#   RDS deletion_protection, storage_encrypted, publicly_accessible = false
-#   S3 SSE-S3 (the encryption sibling is present)
+#   RDS publicly_accessible = false (flow-aware exposure is reserved FR-029)
+#   S3 SSE-S3 (the encryption sibling is present; object-storage encryption is not FR-031 yet)
 
 provider "aws" {
   region                      = "us-east-1"
