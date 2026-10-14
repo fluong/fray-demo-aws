@@ -84,6 +84,18 @@ schema_version: fray-config/v1
 No declared elements — the scan is pure plan inference plus Fray’s server-side
 rules, plus the example waiver above.
 
+## Showcase branches
+
+`demo/*` branches are one-commit showcases rebased onto `main` whenever the
+Fray Action workflows change. The `refresh-showcases` workflow runs
+`scripts/refresh-showcases.sh` on pushes to `main` that touch
+`.github/workflows/fray.yml` or `.github/workflows/fray-check.yml`, and on
+manual `workflow_dispatch` (optional dry run).
+
+Writes use the `SHOWCASE_DEPLOY_KEY` secret (a write-capable deploy key), not
+`GITHUB_TOKEN`. Each scenario commit must stay a single commit over `main`
+and must not touch `.github/` — the script refuses to refresh otherwise.
+
 ## Contributing
 
 After cloning, run `git config core.hooksPath .githooks` once so the pre-push

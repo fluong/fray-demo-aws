@@ -1,0 +1,41 @@
+name: refresh-showcases
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fray.yml'
+      - '.github/workflows/fray-check.yml'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Rebase and report without pushing
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-showcases
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.SHOWCASE_DEPLOY_KEY }}
+
+      - name: Refresh demo/* showcase branches
+        run: |
+          set -euo pipefail
+          chmod +x scripts/refresh-showcases.sh
+          if [[ "${{ inputs.dry_run }}" == "true" ]]; then
+            ./scripts/refresh-showcases.sh --dry-run
+          else
+            ./scripts/refresh-showcases.sh
+          fi
