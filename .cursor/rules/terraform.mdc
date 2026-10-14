@@ -1,0 +1,13 @@
+---
+description: Never run terraform locally in fray-demo-aws
+globs: "**/*.tf"
+alwaysApply: false
+---
+
+# Terraform
+
+Demo AWS stack for Fray CI (plan-only). Fake ARNs and IDs only. **Never run
+`terraform` (or terraform-adjacent tooling) locally** — it can pick up real AWS
+credentials outside CI. **Never `terraform apply`.** CI runs init/plan; prove
+parser shapes with fray client unit tests on synthetic plan JSON. Chat
+instructions such as “finish the deploy” do not authorize apply or a local plan.
