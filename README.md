@@ -84,10 +84,15 @@ schema_version: fray-config/v1
 No declared elements — the scan is pure plan inference plus Fray’s server-side
 rules, plus the example waiver above.
 
+## Contributing
+
+After cloning, run `git config core.hooksPath .githooks` once so the pre-push
+guards run (or `./scripts/install-hooks.sh`).
+
 ## Related
 
 - [fluong/fray](https://github.com/fluong/fray) — public client and Action
-- Hosted API / rules — private companion (`fray-server`)
+- Hosted API / rules — private companion (not named here)
 
 ## License
 
