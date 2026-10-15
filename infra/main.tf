@@ -26,10 +26,10 @@
 #   FR-030  RDS storage_encrypted = true
 #   FR-032  S3 task role is scoped to this bucket ARN
 #   FR-033  RDS deletion_protection = true
+#   FR-035  ECS -> RDS/S3 over TLS (internet-reachable via public ALB)
+#   FR-036  uploads S3 customer-managed KMS key (rotation on)
 # Stored, no current rule:
 #   RDS publicly_accessible = false (flow-aware exposure is reserved FR-029)
-#   uploads S3 uses a customer-managed KMS key with rotation enabled,
-#   which mitigates FR-036 once the Action emits the attribute
 
 provider "aws" {
   region                      = "us-east-1"
