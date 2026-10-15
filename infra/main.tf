@@ -28,7 +28,8 @@
 #   FR-033  RDS deletion_protection = true
 # Stored, no current rule:
 #   RDS publicly_accessible = false (flow-aware exposure is reserved FR-029)
-#   S3 SSE-S3 (the encryption sibling is present; object-storage encryption is not FR-031 yet)
+#   uploads S3 uses a customer-managed KMS key with rotation enabled,
+#   which mitigates FR-036 once the Action emits the attribute
 
 provider "aws" {
   region                      = "us-east-1"
@@ -265,6 +266,12 @@ resource "aws_security_group" "db" {
   }
 }
 
+resource "aws_kms_key" "uploads" {
+  description             = "Customer-managed key for the uploads bucket"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+}
+
 module "uploads" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "5.16.1"
@@ -288,8 +295,10 @@ module "uploads" {
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
-        sse_algorithm = "AES256"
+        sse_algorithm     = "aws:kms"
+        kms_master_key_id = aws_kms_key.uploads.arn
       }
+      bucket_key_enabled = true
     }
   }
 }
